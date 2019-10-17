@@ -8,9 +8,7 @@ script:
   - ./gradlew build test
   - cd  $TRAVIS_BUILD_DIR/src/Clients
   - ./gradlew build
-  
-#Las variables de entorno para los credenciales de acceso a DockerHub
-#las creamos en travis-ci.org
+
 after_success:
   - cp $TRAVIS_BUILD_DIR/src/Clients/build/libs/*.war $TRAVIS_BUILD_DIR/deploy/docker/Clients/drop/
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -19,8 +17,8 @@ after_success:
   - docker build -t $REPO/$TAG $TRAVIS_BUILD_DIR/deploy/docker/Clients
   - docker tag $REPO/$TAG $DOCKER_USER/$REPO:$TAG
   - docker push $DOCKER_USER/$REPO:$TAG
-  - cp $TRAVIS_BUILD_DIR/$TAG $TRAVIS_BUILD_DIR/deploy/docker/OrderService
+  - cp $TRAVIS_BUILD_DIR/src/Backend/OrderService/build/libs/ordering* $TRAVIS_BUILD_DIR/deploy/docker/Order/drop/
+  - export TAG=order
+  - docker build -t $REPO/$TAG $TRAVIS_BUILD_DIR/deploy/docker/Order
   - docker tag $REPO/$TAG $DOCKER_USER/$REPO:$TAG
   - docker push $DOCKER_USER/$REPO:$TAG
-#No creamos la imagen de mongo db con el archivo mongorecords.js porque es
-#estático y ya lo hemos subido a DockerHub manualmente 
